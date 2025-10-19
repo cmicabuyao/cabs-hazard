@@ -66,15 +66,15 @@
 (function(){
     // 1. STORM DATA (Verified based on the image)
     const STORM_DATA = [
-        { hours: 6, datetime: "12-Hour Forecast 08:00 PM 18 October 2025", lat: 13.7, lon: 123.2, location: "Vicinity of Calabanga, Camarines Sur", cat: "TS", msw: 65, movement: "NWW 25" },
-        { hours: 12, datetime: "12-Hour Forecast 08:00 AM 19 October 2025", lat: 15.0, lon: 121.8, location: "Over the coastal waters of Ponukulan, Pollilo Islands, Quezon", cat: "TS", msw: 75, movement: "NW 20" },
-        { hours: 24, datetime: "24-Hour Forecast 08:00 PM 19 October 2025", lat: 16.8, lon: 119.9, location: "Over the coastal waters of Bolaoan, La Union", cat: "TS", msw: 75, movement: "NW 25" },
-        { hours: 36, datetime: "36-Hour Forecast 08:00 AM 20 October 2025", lat: 18.0, lon: 117.2, location: "345 km West of Sinait, Ilocos Sur (OUTSIDE PAR)", cat: "TS", msw: 85, movement: "WNW 25" },
-        { hours: 48, datetime: "48-Hour Forecast 08:00 PM 20 October 2025", lat: 18.4, lon: 115.5, location: "530 km West of Sinait, Ilocos Sur (OUTSIDE PAR)", cat: "STS", msw: 95, movement: "WNW 15" },
-        { hours: 60, datetime: "60-Hour Forecast 08:00 AM 21 October 2025", lat: 18.6, lon: 114.3, location: "655 km West of Sinait, Ilocos Sur (OUTSIDE PAR)", cat: "STS", msw: 95, movement: "W 10" },
-        { hours: 72, datetime: "72-Hour Forecast 08:00 PM 21 October 2025", lat: 18.4, lon: 113.7, location: "715 km West of Sinait, Ilocos Sur (OUTSIDE PAR)", cat: "STS", msw: 100, movement: "WSW Slowly" },
-        { hours: 96, datetime: "96-Hour Forecast 08:00 PM 22 October 2025", lat: 16.7, lon: 111.9, location: "950 km West of Northern (OUTSIDE PAR)", cat: "STS", msw: 100, movement: "SW 10" },
-        { hours: 120, datetime: "120-Hour Forecast 08:00 PM 23 October 2025", lat: 14.8, lon: 109.5, location: "1,125 km West of Central Luzon (OUTSIDE PAR)", cat: "STS", msw: 85, movement: "SW 15" }
+        { hours: 6, datetime: "12-Hour Forecast 08:00 AM 19 October 2025", lat: 14.6, lon: 120.9, location: "Waters of Manila Bay", cat: "TS", msw: 65, movement: "NWW 15" },
+        { hours: 12, datetime: "12-Hour Forecast 08:00 PM 19 October 2025", lat: 16.4, lon: 118.8, location: "170km West Northwest of Dagupan City, Pangasinan", cat: "TS", msw: 75, movement: "NW 30" },
+        { hours: 24, datetime: "24-Hour Forecast 08:00 AM 20 October 2025", lat: 17.8, lon: 115.8, location: "495km West of Snait, Ilocos Sur", cat: "TS", msw: 85, movement: "WNW 30" },
+        { hours: 36, datetime: "36-Hour Forecast 08:00 PM 20 October 2025", lat: 18.1, lon: 114.0, location: "685 km West of Sinait, Ilocos Sur (OUTSIDE PAR)", cat: "TS", msw: 85, movement: "W 15" },
+        { hours: 48, datetime: "48-Hour Forecast 08:00 AM 21 October 2025", lat: 18.0, lon: 112.0, location: "810 km West of Northern Luzon (OUTSIDE PAR)", cat: "STS", msw: 85, movement: "W 10" },
+        { hours: 60, datetime: "60-Hour Forecast 08:00 PM 21 October 2025", lat: 17.5, lon: 112.0, location: "895 km West of Northern Luzon (OUTSIDE PAR)", cat: "STS", msw: 100, movement: "WSW 10" },
+        { hours: 72, datetime: "72-Hour Forecast 08:00 AM 22 October 2025", lat: 16.8, lon: 111.1, location: "895 km West of Northern Luzon (OUTSIDE PAR)", cat: "STS", msw: 100, movement: "SW 10" },
+        { hours: 96, datetime: "96-Hour Forecast 08:00 AM 23 October 2025", lat: 15.4, lon: 109.0, location: "1,175 km West of Central Luzon (OUTSIDE PAR)", cat: "STS", msw: 95, movement: "SW 10" },
+   
     ];
 
     // 2. Map Initialization
@@ -134,7 +134,7 @@
                 Intensity: ${point.cat} (${point.msw} km/h)<br>
                 Movement: ${point.movement}<br>
                 <hr style="border-top: 1px solid #777; margin: 5px 0;">
-                <strong>Source: DOST-PAGASA<strong> <br> last update: 2344101825
+                <strong>Source: DOST-PAGASA<strong> <br> last update: 1224101925
             </div>
         `;
         
