@@ -1,294 +1,102 @@
-<!-- 🔹 Loading Screen Container -->
-<div id="loading-screen">
-  <div class="loading-overlay"></div>
-  <div class="loading-content">
-    <h1 class="loading-title">CABS-HAZARDS</h1>
-    <p class="loading-bio">A Meteorological & Geological Hazards Map for <br> CITY OF CABUYAO</p>
-    <div class="progress-container">
-      <div id="progress-bar"></div>
-      <span id="progress-text">0%</span>
-    </div>
-  </div>
-</div>
-
-<!-- 🔹 Styles -->
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,700&display=swap');
-
-  #loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('') center center / cover no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-    overflow: hidden;
-  }
-
-  /* Transparent black overlay (75%) */
-  .loading-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    z-index: 1;
-  }
-
-  .loading-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  .loading-title {
-    font-size: 2.5em;
-    font-style: italic;
-    font-weight: 700;
-    margin-bottom: -5px;
-    letter-spacing: 2px;
-  }
-  
-  .loading-bio {
-    font-size: 13px;
-    font-style: bold;
-    font-weight: ;
-    margin-bottom: 05px;
-    letter-spacing: 1px;
-  }
-
-  .progress-container {
-    position: relative;
-    width: 280px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    margin: 0 auto;
-    overflow: hidden;
-  }
-
-  #progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, blue, red);
-    border-radius: 20px;
-    transition: width 0.1s linear;
-  }
-
-  #progress-text {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 1.1em;
-    letter-spacing: 1px;
-  }
-</style>
-
-<!-- 🔹 Script -->
-<script>
-  let progress = 0;
-  const bar = document.getElementById("progress-bar");
-  const text = document.getElementById("progress-text");
-  const screen = document.getElementById("loading-screen");
-
-  const interval = setInterval(() => {
-    progress += 0.5; // 5 seconds total
-    if (progress > 100) progress = 100;
-
-    bar.style.width = progress + "%";
-    text.textContent = progress + "%";
-
-    if (progress === 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        screen.style.transition = "opacity 0.8s ease";
-        screen.style.opacity = 0;
-        setTimeout(() => screen.style.display = "none", 800);
-      }, 300);
-    }
-  }, 100);
-</script>
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CABS-HAZARDS</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="logo3.png">
+  <title>CABS-HAZARDS v.1.2.</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Basic styles -->
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#222;color:#fff;overflow:hidden;
     }
 
-    body {
-      background: #222;
-      color: white;
-      overflow: hidden;
+    /* Loading screen */
+    #loading-screen{
+      position:fixed;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      z-index:99999;background:rgba(0,0,0,0.75);
+    }
+    .loading-content{text-align:center;color:#fff}
+    .loading-title{font-size:2.2rem;font-weight:700;margin-bottom:-2px}
+    .loading-bio{font-size:13px;opacity:.9;margin-bottom:10px}
+    .progress-container{width:280px;height:18px;background:rgba(255,255,255,0.12);border-radius:20px;overflow:hidden;margin:0 auto}
+    #progress-bar{height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg, #2196f3, #e91e63);transition:width 0.5s linear}
+    #progress-text{margin-top:10px;font-weight:700}
+
+    /* Sidebar */
+    #sidebar{
+      position:fixed;left:0;top:0;height:100%;width:320px;
+      padding:20px 25px;background:rgba(30,30,30,0.95);z-index:20;transition:left .35s ease;
+    }
+    #sidebar.hide{left:-340px}
+    #sidebar h1{display:flex;gap:10px;align-items:center;font-size: 20px;}
+    #sidebar h1 img{width:40px;height:40px;object-fit:contain}
+    #sidebar p{opacity:.85;margin:3px 0 10px}
+    .time-box{background:#d32f2f;color:#fff;padding:10px;border-radius:6px;margin-bottom:12px;text-align:center;font-weight:900}
+    .time-box .date{opacity:.9;font-size:15px;margin-top:1px}
+    .menu-section{margin-top:05px}
+    /* header titles (no arrow icon) */
+    .menu-section h3{
+      font-size:15px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,0.03);
+      display:block;cursor:pointer;margin-bottom:4px;
+    }
+    /* compact submenu: no extra gaps, left-aligned with parent */
+    .menu-section ul{list-style:none;margin:0;padding:0 0 6px 0;display:none}
+    .menu-section ul.open{display:block}
+    .menu-section li{margin:4px 0}
+    .menu-section a{
+      display:block;padding:6px 10px;border-radius:6px;text-decoration:none;color:#fff;opacity:.95;
+    }
+    .menu-section a:hover{background:rgba(255,255,255,0.03);text-decoration:none}
+    .menu-section a.active{background:rgba(255,255,255,0.06);font-weight:700}
+
+    /* Toggle button */
+    #toggleBtn{
+      position:fixed;right:25px;bottom:25px;width:55px;height:55px;border-radius:50%;
+      background:#fff;color:#111;border:none;z-index:30;font-size:26px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)
+    }
+    #toggleBtn:hover{background:#aa00ff;color:#fff}
+
+    /* iframe container */
+    #map-frame{position:fixed;right:0;top:0;left:320px;height:100vh;width:calc(100% - 320px);border:0;z-index:5;transition:left .35s ease,width .35s ease}
+    #sidebar.hide ~ #map-frame{left:0;width:100%}
+
+    /* Responsive */
+    @media (max-width:768px){
+      #sidebar{width:260px;padding:18px}
+      #map-frame{left:260px;width:calc(100% - 260px)}
+      #sidebar.hide ~ #map-frame{left:0;width:100%}
+      #toggleBtn{right:16px;bottom:16px}
     }
 
-    /* Sidebar / Menu */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 320px;
-      height: 100%;
-      background: rgba(30, 30, 30, 0.9);
-      padding: 25px;
-      transition: all 0.4s ease;
-      z-index: 10;
-    }
-
-    #sidebar.hide {
-      left: -320px;
-    }
-
-    #sidebar h1 {
-      font-size: 25px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #sidebar h1 img {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-    }
-
-    #sidebar p {
-      font-size: 15px;
-      opacity: 0.8;
-      margin-bottom: 20px;
-    }
-
-    .time-box {
-      background: red;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: 800;
-      margin-bottom: 15px;
-    }
-
-    .time-box .date {
-      font-size: 15px;
-      opacity: 0.8;
-    }
-
-    .menu-section {
-      margin-top: 20px;
-    }
-
-    .menu-section h3 {
-      font-size: 16px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.05);
-      padding: 8px;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .menu-section h3:hover {
-      background: rgba(255,255,255,0.1);
-    }
-
-    .menu-section ul {
-      list-style: none;
-      margin-bottom: 15px;
-      margin-left: 10px;
-      display: none;
-    }
-
-    .menu-section li {
-      font-size: 14px;
-      opacity: 0.9;
-      margin: 6px 0;
-    }
-
-    .menu-section a {
-      color: white;
-      text-decoration: none;
-    }
-
-    .menu-section a:hover {
-      text-decoration: underline;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100vh;
-      border: none;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Floating button (bottom-right corner) */
-    #toggleBtn {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-      color: #111;
-      font-size: 26px;
-      border: none;
-      cursor: pointer;
-      z-index: 20;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-      transition: 0.3s;
-    }
-
-    #toggleBtn:hover {
-      background: #00bcd4;
-      color: white;
-    }
-
-    @media (max-width: 768px) {
-      #sidebar {
-        width: 260px;
-      }
-      #sidebar.hide {
-        left: -260px;
-      }
-      #sidebar h1 {
-        font-size: 18px;
-      }
-      .menu-section li {
-        font-size: 13px;
-      }
-    }
+    /* small footer text in menu */
+    .muted{font-size:12px;opacity:.7;margin-top:12px}
   </style>
 </head>
 <body>
 
+  <!-- Loading screen -->
+  <div id="loading-screen" aria-hidden="false">
+    <div class="loading-content">
+      <div class="loading-title">CABS-HAZARDS</div>
+      <div class="loading-bio">A Meteorological & Geological Hazards Map <br> for City of Cabuyao. <strong>Please wait loading the data files!</strong></div>
+      <div class="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="progress-text">0%</div>
+    </div>
+  </div>
+
   <!-- Sidebar -->
-  <div id="sidebar">
-    <h1> <img src="logo3.png" alt="Logo">
-      CABS-HAZARDS</h1>
+  <aside id="sidebar">
+    <h1><img src="logo3.png" alt="logo"> CABS-HAZARDS</h1>
     <p>A Meteorological & Geological Hazards Map for City of Cabuyao</p>
 
     <div class="time-box">
@@ -296,107 +104,163 @@
       <div class="date" id="date">Loading...</div>
     </div>
 
-    <div class="menu-section">
-      <h3>WEATHER <span>▸</span></h3>
+    <nav class="menu-section" aria-label="Menu">
+      <h3>WEATHER</h3>
       <ul>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/weather/daily">Daily Weather</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/weather/observed">Weather Observed</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/weather/outlook">03-Days Weather Outlook</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/weather/satellite">Satellite Imagery</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/weather/radar">Radar</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map01/weather/daily">Daily Weather</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map02/weather/observed">Weather Observed</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map03/weather/outlook">03-Days Weather Outlook</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map04/weather/satellite">Satellite Imagery</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map05/weather/radar">Radar</a></li>
       </ul>
 
-      <h3>CLIMATE <span>▸</span></h3>
+      <h3>CLIMATE</h3>
       <ul>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/tc-active">Active Tropical Cyclone</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/tc-forecast">Tropical Cyclone Forecast</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/tc-formation">Tropical Cyclone Formation</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/rainfall">Rainfall Accumulated</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/wind">Wind Accumulated</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/temperature">Temperature Accumulated</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/climate/enso">ENSO</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map01/climate/tc-active">Active Tropical Cyclone</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map02/climate/tc-forecast">Tropical Cyclone Forecast</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map03/climate/tc-formation">Tropical Cyclone Formation</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map04/climate/rainfall">Rainfall Accumulated</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map05/climate/wind">Wind Accumulated</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map06/climate/temperature">Temperature Accumulated</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map07/climate/enso">ENSO</a></li>
       </ul>
 
-      <h3>HYDROLOGICAL <span>▸</span></h3>
+      <h3>HYDROLOGICAL</h3>
       <ul>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/hydrological/advisory">Flood Advisory</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/hydrological/reported">Flooding Reported</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/hydrological/hazard">Flooding Hazards</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/hydrological/river">River Basis</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/hydrological/wave">Laguna De Bay Current Wave</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map01/hydrological/advisory">Flood Advisory</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map02/hydrological/reported">Flooding Reported</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map03/hydrological/hazard">Flooding Hazards</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map04/hydrological/river">River Basin</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map05/hydrological/wave">Laguna De Bay Current Wave</a></li>
       </ul>
 
-      <h3>EARTHQUAKE <span>▸</span></h3>
+      <h3>EARTHQUAKE</h3>
       <ul>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/earthquake/phivocs/latest">DOST-PHIVOCS Seismic Map</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/earthquake/usgs/latest">US-GS Seismic Map</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/earthquake/hazard">Intesity Hazard Map</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/earthquake/fault">West Valley Fault: City of Cabuyao</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map01/earthquake/phivocs/latest">DOST-PHIVOCS Seismic Map</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map02/earthquake/usgs/latest">US-GS Seismic Map</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map03/earthquake/hazard">Intensity Hazard Map</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/data-map04/earthquake/fault">West Valley Fault: City of Cabuyao</a></li>
       </ul>
- 
-           <h3>ACCOUNT<span>▸</span></h3>
+
+      <h3>ACCOUNT</h3>
       <ul>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/login">Login</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/register">Register</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/about">About</a></li>
-        <li><a href="https://cwicabuyao.github.io/cabs-hazard/donate">Donate</a></li>
-        <p><strong>EXCLUSIVE FOR OFFICIAL MEMBERS ONLY, AND LGU CAN SET UP AN ACCOUNT.</strong> Some features and data have privacy settings that restrict viewing.</p>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/login">Login</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/register">Register</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/about">About</a></li>
+        <li><a href="#" data-src="https://cwicabuyao.github.io/cabs-hazard/donate">Donate</a></li>
+        <p class="muted"><strong>EXCLUSIVE FOR OFFICIAL MEMBERS ONLY, AND LGU CAN SET UP AN ACCOUNT.</strong> Some features and data have privacy settings that restrict viewing.</p>
       </ul>
-      
-    </div>
-    
-    <br>
-    
-    <p><strong>CABS-HAZARD</strong> is a dynamic meteorological and geological hazard map developed by cwi_cabuyao to provide fast, reliable updates on weather, climate and earthquake risks. It helps residents stay informed, aware, and prepared against potential hazards in City of Cabuyao.</p>
-    
-  </div>
+    </nav>
 
-  <!-- Floating menu toggle button -->
-  <button id="toggleBtn">☰</button>
+    <p style="margin-top:14px;opacity:.9;font-size:13px">
+      <strong>CABS-HAZARD</strong> is a dynamic meteorological and geological hazard map developed by cwi_cabuyao to provide fast, reliable updates on weather, climate and earthquake risks. It helps residents stay informed, aware, and prepared against potential hazards in City of Cabuyao.
+    </p>
+  </aside>
 
-  <!-- Map frame -->
-  <iframe src="https://api.maptiler.com/maps/0199f37c-3fd3-7c9c-a0dc-9defd2a0e3f2/?key=1uXJufymofNDgGrvPfCm#12.5/14.26968/121.13718"></iframe>
+  <!-- Toggle button -->
+  <button id="toggleBtn" aria-label="Toggle menu">☰</button>
 
+  <!-- Main iframe: initial src is MapTiler as requested -->
+  <iframe id="map-frame" src="https://api.maptiler.com/maps/0199f37c-3fd3-7c9c-a0dc-9defd2a0e3f2/?key=1uXJufymofNDgGrvPfCm#12.5/14.26968/121.13718" title="CABS-HAZARDS Map"></iframe>
+
+  <!-- Scripts -->
   <script>
-    // Sidebar toggle
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('toggleBtn');
-    toggleBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('hide');
-    });
-
-    // Philippine Standard Time
-    function updateTime() {
-      const now = new Date();
-      const options = { timeZone: 'Asia/Manila', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const optionsDate = { timeZone: 'Asia/Manila', day: 'numeric', month: 'long', year: 'numeric' };
-      document.getElementById('time').textContent = now.toLocaleTimeString('en-US', options);
-      document.getElementById('date').textContent = now.toLocaleDateString('en-US', optionsDate);
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    // Collapsible menu
-    document.querySelectorAll('.menu-section h3').forEach(header => {
-      header.addEventListener('click', () => {
-        const ul = header.nextElementSibling;
-        const isOpen = ul.style.display === 'block';
-        document.querySelectorAll('.menu-section ul').forEach(list => list.style.display = 'none');
-        document.querySelectorAll('.menu-section h3 span').forEach(icon => icon.textContent = '▸');
-        if (!isOpen) {
-          ul.style.display = 'block';
-          header.querySelector('span').textContent = '▾';
+    /* Loading progress simulation (approx 6s) */
+    (function(){
+      const screen = document.getElementById('loading-screen');
+      const bar = document.getElementById('progress-bar');
+      const txt = document.getElementById('progress-text');
+      let p = 0;
+      const t = setInterval(()=>{
+        p += 0.8; if(p>100) p = 100;
+        bar.style.width = p + '%';
+        txt.textContent = Math.round(p) + '%';
+        if(p >= 100){
+          clearInterval(t);
+          setTimeout(()=> {
+            screen.style.transition = 'opacity .6s ease';
+            screen.style.opacity = 0;
+            setTimeout(()=> screen.style.display = 'none', 600);
+          }, 250);
         }
-      });
-    });
+      }, 60);
+    })();
 
-    // Floater close button
-    const floater = document.getElementById('floater');
-    document.getElementById('closeFloater').addEventListener('click', () => {
-      floater.style.opacity = '0';
-      floater.style.transform = 'translateY(20px)';
-      setTimeout(() => floater.style.display = 'none', 300);
-    });
+    /* Time & Date (Asia/Manila) */
+    (function(){
+      function update(){
+        const now = new Date();
+        const timeOpts = { timeZone:'Asia/Manila', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true };
+        const dateOpts = { timeZone:'Asia/Manila', day:'numeric', month:'long', year:'numeric' };
+        document.getElementById('time').textContent = now.toLocaleTimeString('en-US', timeOpts);
+        document.getElementById('date').textContent = now.toLocaleDateString('en-US', dateOpts);
+      }
+      update();
+      setInterval(update,1000);
+    })();
+
+    /* Sidebar toggle */
+    (function(){
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('toggleBtn');
+      toggle.addEventListener('click', ()=> sidebar.classList.toggle('hide'));
+    })();
+
+    /* Collapsible sections (single-open accordion; clicking same header toggles close) */
+    (function(){
+      const headers = Array.from(document.querySelectorAll('.menu-section h3'));
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const ul = header.nextElementSibling;
+          if(!ul) return;
+
+          // If this section is already open -> close it
+          if (ul.classList.contains('open')) {
+            ul.classList.remove('open');
+            return;
+          }
+
+          // Otherwise close all sections, then open this one
+          document.querySelectorAll('.menu-section ul').forEach(u => u.classList.remove('open'));
+          ul.classList.add('open');
+        });
+      });
+    })();
+
+    /* Menu links: change iframe src instead of opening new tab */
+    (function(){
+      const iframe = document.getElementById('map-frame');
+
+      // helper to set active link styles
+      function setActiveLink(link){
+        document.querySelectorAll('.menu-section a').forEach(a => a.classList.remove('active'));
+        if(link) link.classList.add('active');
+      }
+
+      // add click handlers to all menu anchors that have data-src
+      document.querySelectorAll('.menu-section a[data-src]').forEach(a=>{
+        a.addEventListener('click', function(ev){
+          ev.preventDefault();
+          const src = this.getAttribute('data-src');
+          if(!src) return;
+          // set iframe src
+          iframe.src = src;
+          // mark active
+          setActiveLink(this);
+          // collapse sidebar on small screens for better view
+          const sidebar = document.getElementById('sidebar');
+          if(window.innerWidth <= 768) sidebar.classList.add('hide');
+        });
+      });
+
+      // Optionally, mark the initial active item if it matches the initial iframe src
+      (function markInitial(){
+        const initial = iframe.getAttribute('src') || '';
+        const links = Array.from(document.querySelectorAll('.menu-section a[data-src]'));
+        const match = links.find(l => l.getAttribute('data-src') && initial.includes(l.getAttribute('data-src')));
+        if(match) setActiveLink(match);
+      })();
+    })();
   </script>
 </body>
 </html>
