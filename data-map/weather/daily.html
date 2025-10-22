@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cabuyao — Fullscreen Dark OSM Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    html, body, #map { height: 100%; margin: 0; padding: 0; }
+
+    .custom-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform: translate(-50%, -100%);
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
+
+    .custom-marker img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      margin-bottom: 3px;
+    }
+
+    .loc-name {
+      font-weight: bold;
+      color: white;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
+
+    .temp {
+      color: white;
+      font-size: 13px;
+    }
+
+    .info-box {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: black;
+      color: white;
+      border: 1px solid white;
+      padding: 8px 10px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.2;
+      z-index: 999;
+      border-radius: 3px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="info-box">
+Issued: 23 October 2025
+Valid Until: 5:00 AM - 5:00 PM Today
+Prepared by: AT/HH
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map', {
+    center: [14.277222, 121.123333],
+    zoom: 13,
+    zoomControl: true
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors & CARTO',
+    maxZoom: 19
+  }).addTo(map);
+
+  const locations = [
+    { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H30° - L26°", icon: "icon02.png" },
+    { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H30° - L26°", icon: "icon01.png" },
+    { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H30° - L26°", icon: "icon01.png" }
+  ];
+
+  locations.forEach(loc => {
+    const iconHtml = `
+      <div class="custom-marker">
+        <img src="${loc.icon}">
+        <div class="loc-name">${loc.name}</div>
+        <div class="temp">${loc.temp}</div>
+      </div>`;
+    const customIcon = L.divIcon({
+      html: iconHtml,
+      className: '',
+      iconSize: [30, 42],
+      iconAnchor: [15, 42]
+    });
+    L.marker([loc.lat, loc.lon], { icon: customIcon }).addTo(map);
+  });
+</script>
+</body>
+</html>
