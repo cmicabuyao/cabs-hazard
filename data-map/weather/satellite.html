@@ -37,13 +37,13 @@
 
     // Base map — Dark Style (OpenStreetMap via CartoDB)
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors & CartoDB',
+      attribution: '&copy; Satellite JMA/DOST-PAGASA & OpenStreetMap contributors & CartoDB',
       subdomains: 'abcd',
-      maxZoom: 19
+      maxZoom: 25
     }).addTo(map);
 
     // Himawari overlay link
-    const himawariUrl = "https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/latest-him-colored-hourly.gif";
+    const himawariUrl = "http://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/latest-him-colored-hourly.gif";
 
     // EDIT HERE: Overlay bounds
     // These coordinates define where the GIF image is drawn on the map.
