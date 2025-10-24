@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "Tropical Cyclone Forecast",
+    "source": "Custom Johnson File"
+  },
+  "data": [
+    {
+      "id": 1,
+      "title": "PAGASA",
+      "events": [
+        {
+          "forecast_hour": "6 hours",
+          "datetime": "5 AM, October 23, 2025",
+          "latitude": 20.0,
+          "longitude": 121.3,
+          "location": "85 km southwest of Basco, Batanes",
+          "category": "Tropical Depression",
+          "sustained_winds": "45 km/h",
+          "movement": "Southwest at 20 km/h"
+        },
+        {
+          "forecast_hour": "12 hours",
+          "datetime": "5 PM, October 23, 2025",
+          "latitude": 18.7,
+          "longitude": 120.0,
+          "location": "80 km northwest of Laoag City, Ilocos Norte",
+          "category": "Tropical Depression",
+          "sustained_winds": "45 km/h",
+          "movement": "Southwest at 20 km/h"
+        },
+        {
+          "forecast_hour": "24 hours",
+          "datetime": "5 AM, October 24, 2025",
+          "latitude": 17.0,
+          "longitude": 117.7,
+          "location": "290 km west of Dagupan, La Union",
+          "category": "Low Pressure Area",
+          "sustained_winds": "",
+          "movement": "Southwest at 20 km/h"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "CWI CABUYAO",
+      "events": [
+        {
+          "forecast_hour": "6 hours",
+          "datetime": "5 AM, October 23, 2025",
+          "latitude": 8.0,
+          "longitude": 132.3,
+          "location": "795 km east of Butuan City",
+          "category": "Low Pressure Area",
+          "sustained_winds": "",
+          "movement": "Westward at 15 km/h"
+        },
+        {
+          "forecast_hour": "12 hours",
+          "datetime": "5 PM, October 23, 2025",
+          "latitude": 8.7,
+          "longitude": 135.4,
+          "location": "435 km east of Butuan City",
+          "category": "Tropical Depression",
+          "sustained_winds": "45 km/h",
+          "movement": "Westward at 15 km/h"
+        }
+      ]
+    }
+  ]
+}
