@@ -1,594 +1,247 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GENERAL OBSERVED: CITY OF CABUYAO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Base Styles and Font Setup (CSS) */
-        :root {
-            --primary-color: #00bcd4; /* Cyan/Blue */
-            --background-color: #1a1a2e; /* Dark Blue/Purple */
-            --card-background: #2c2c44;
-            --text-color: #ffffff;
-            --secondary-text-color: #a0a0b0;
-            --gauge-low: #f44336; /* Red */
-            --gauge-mid: #ffeb3b; /* Yellow */
-            --gauge-high: #4caf50; /* Green */
-            --gauge-humidity: #2196f3; /* Blue for Humidity */
-            --feels-like-color: #f39c12; /* Orange for Feels Like */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Outlook</title>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map-container { 
+      height: 100%; /* Full height container */
+      position: relative; /* Para maging base ng absolute positioning ng buttons */
+    }
+    #map { 
+      height: 100%; 
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+    /* --- Marker Styles (Pareho pa rin) --- */
+    .custom-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform: translate(-50%, -100%);
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
 
-        header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(1.5rem, 2,5vw, 2.5rem); 
-            color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(109, 0, 212, 0.5); 
-            font-style: italic; 
-            font-weight: 700; 
-        }
+    .custom-marker img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      margin-bottom: 3px;
+    }
 
-        /* Update Info */
-        .update-info {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--secondary-text-color);
-            margin-bottom: 10px;
-        }
+    .loc-name {
+      font-weight: bold;
+      color: white;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
 
-        /* Dashboard Layout (Responsive Grid) */
-        .gauges-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 30px;
-            margin-bottom: 40px;
-        }
+    .temp {
+      color: white;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
 
-        .gauge {
-            background-color: var(--card-background);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+    .chance {
+      color: #90ee90; /* Light green for visibility */
+      font-size: 12px;
+      font-weight: bold;
+    }
 
-        .gauge-header {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-        }
+    /* --- Fixed Info Box (Floating sa Upper-Right) --- */
+    .info-box {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7); /* Mas transparent para makita ang mapa */
+      color: white;
+      border: 1px solid white;
+      padding: 8px 10px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.2;
+      z-index: 999;
+      border-radius: 3px;
+      white-space: pre-line;
+    }
 
-        .other-info {
-            font-size: 0.9rem;
-            color: var(--secondary-text-color);
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    /* --- Floating Button Container (NEW STYLES) --- */
+    #button-container {
+      position: absolute; /* Ginawa itong floating */
+      bottom: 20px;       /* Posisyon sa ilalim ng mapa */
+      left: 50%;          /* Center horizontally */
+      transform: translateX(-50%); /* Tiyakin na nasa gitna */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      z-index: 1000; /* Tiyakin na nasa ibabaw ng mapa at markers */
+    }
 
-        /* --- 1. Temperature Gauge Styling (Final Text Only) --- */
-        .temp-display-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 180px; /* Reduced height as bars are gone */
-            gap: 15px;
-            margin: 20px auto;
-        }
-        
-        .temp-reading {
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    .day-button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: 2px solid white;
+      background-color: transparent; /* Transparent background */
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+      border-radius: 5px;
+    }
 
-        .temp-reading .label {
-            font-size: 1rem;
-            color: var(--secondary-text-color);
-            margin-bottom: 5px;
-        }
-        
-        .temp-reading .value {
-            font-size: 3rem; /* Larger font for main temp */
-            line-height: 1;
-        }
+    .day-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
 
-        #main-temp-value { color: var(--gauge-high); }
-        #feels-like-value { 
-            color: var(--feels-like-color); 
-            font-size: 2rem; /* Slightly smaller font for feels like */
-        }
-
-        /* --- 2. Wind Gauge Styling --- (No changes here) */
-        .wind-compass-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 20px auto;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 3px solid var(--primary-color);
-            box-shadow: inset 0 0 15px rgba(0, 188, 212, 0.5);
-        }
-
-        .compass-point {
-            position: absolute;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: var(--secondary-text-color);
-        }
-        #N { top: -15px; left: 50%; transform: translateX(-50%); color: var(--gauge-high); }
-        #S { bottom: -15px; left: 50%; transform: translateX(-50%); }
-        #E { top: 50%; right: -15px; transform: translateY(-50%); }
-        #W { top: 50%; left: -15px; transform: translateY(-50%); }
-
-        .wind-speed-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .wind-direction-arrow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -100%) rotate(0deg); 
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 40px solid var(--gauge-low); 
-            transform-origin: bottom center;
-            transition: transform 0.8s ease-out; 
-            z-index: 10;
-        }
-        
-        /* --- 3. Pressure/Barometer Gauge Styling --- (No changes here) */
-        .barometer-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 20px auto;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 3px solid var(--gauge-mid);
-        }
-        
-        .barometer-needle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -100%) rotate(-135deg); 
-            width: 4px;
-            height: 80px;
-            background-color: var(--primary-color);
-            transform-origin: bottom center;
-            border-radius: 2px 2px 0 0;
-            z-index: 10;
-            transition: transform 1s ease-out;
-        }
-
-        .pressure-value {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        
-        /* --- 4. Humidity Gauge Styling --- (No changes here) */
-        .humidity-gauge {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        
-        .humidity-chart {
-            position: relative;
-            width: 180px;
-            height: 90px; 
-            margin: 20px auto;
-            overflow: hidden; 
-        }
-        
-        .humidity-circle {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200%; 
-            border-radius: 50%;
-            background: conic-gradient(
-                var(--gauge-humidity) 0%, 
-                var(--gauge-humidity) 0%, 
-                rgba(255, 255, 255, 0.1) 0% 
-            );
-            transition: background 1s ease-out; 
-        }
-        
-        .humidity-mask {
-            position: absolute;
-            bottom: 15px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px; 
-            height: 140px;
-            background-color: var(--card-background);
-            border-radius: 50%;
-        }
-
-        .humidity-percent-display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, 0); 
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--text-color);
-            z-index: 10;
-        }
-
-        /* --- General Status Section --- */
-        .general-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            background-color: var(--card-background);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .status-details h2 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            text-transform: capitalize;
-        }
-
-        .status-details p {
-            color: var(--secondary-text-color);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .gauges-container {
-                grid-template-columns: 1fr; 
-                gap: 20px;
-            }
-            .general-status {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+    .day-button.active {
+      background-color: #007bff; /* Blue for active button */
+      border-color: #007bff;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>GENERAL OBSERVED: CITY OF CABUYAO</h1>
-    </header>
 
-    <main class="weather-dashboard">
-        <p class="update-info">
-            Last Updated: <span id="last-update">Fetching data...</span>
-            <br>
-            NOTICE: This is unofficial data from AWI-ESP32 and OpenWeather API; values may vary.
-        </p>
-        
-        <div class="gauges-container">
-            
-            <div class="gauge temperature-gauge">
-                <div class="gauge-header">TEMPERATURE</div>
-                <div class="temp-display-container">
-                    
-                    <div class="temp-reading">
-                        <span class="label">Air Temp:</span>
-                        <span id="main-temp-value" class="value">--°C</span>
-                    </div>
+<div id="map-container">
+  <div id="map"></div>
+  
+  <div class="info-box">
+  Issued: 23 October 2025
+  Valid Until: 5:00 AM - 5:00 PM Today
+  Prepared by: AT/HH
+  </div>
 
-                    <div class="temp-reading">
-                        <span class="label">Feels Like:</span>
-                        <span id="feels-like-value" class="value">--°C</span>
-                    </div>
-                </div>
-                <div class="other-info">
-                    <p>Min/Max: <span id="min-max-temp">--°C / --°C</span></p>
-                </div>
-            </div>
+  <div id="button-container">
+    <button class="day-button active" id="day1-btn" onclick="showForecast('day1')">Day 1</button>
+    <button class="day-button" id="day2-btn" onclick="showForecast('day2')">Day 2</button>
+    <button class="day-button" id="day3-btn" onclick="showForecast('day3')">Day 3</button>
+  </div>
+</div>
 
-            <div class="gauge wind-gauge">
-                <div class="gauge-header">WIND</div>
-                <div class="wind-compass-container">
-                    <div id="N" class="compass-point">N</div>
-                    
-                    <div id="S" class="compass-point">S</div>
-                    <div id="E" class="compass-point">E</div>
-                    
-                    <div id="W" class="compass-point">W</div>
-                    
-                    <div id="wind-direction-arrow" class="wind-direction-arrow"></div>
-                    <div class="wind-speed-display">
-                        <span id="wind-speed">--</span>
-                        <small>km/h</small>
-                    </div>
-                </div>
-                <div class="other-info">
-                    <p>Direction: <span id="wind-direction-text">--</span></p>
-                </div>
-            </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map', {
+    center: [14.277222, 121.123333],
+    zoom: 15,
+    zoomControl: true
+  });
 
-            <div class="gauge pressure-gauge">
-                <div class="gauge-header">ATMOS. PRESSURE</div>
-                <div class="barometer-container">
-                    <div id="barometer-needle" class="barometer-needle"></div>
-                    <div class="barometer-dial">
-                        <div class="compass-point" style="top: 75%; left: 10%; transform: rotate(45deg); font-size: 0.8rem;">980</div>
-                        <div class="compass-point" style="top: 5%; left: 50%; transform: translateX(-50%); color: var(--gauge-high); font-size: 0.8rem;">1010</div>
-                        <div class="compass-point" style="top: 75%; right: 10%; transform: rotate(-45deg); font-size: 0.8rem;">1040</div>
-                    </div>
-                    <div class="pressure-value">
-                        <span id="pressure-hpa">----</span>
-                        <small>hPa</small>
-                    </div>
-                </div>
-                <div class="other-info">
-                    <p>Visibility: <span id="visibility-km">-- km</span></p>
-                </div>
-            </div>
-            
-            <div class="gauge humidity-gauge">
-                <div class="gauge-header">HUMIDITY</div>
-                <div class="humidity-chart">
-                    <div id="humidity-circle" class="humidity-circle"></div>
-                    <div class="humidity-mask"></div>
-                    <div class="humidity-percent-display">
-                        <span id="humidity-percent">--%</span>
-                    </div>
-                </div>
-                <div class="other-info">
-                    <p>Cloudiness: <span id="cloudiness-percent">--%</span></p>
-                </div>
-            </div>
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors & CARTO',
+    maxZoom: 19
+  }).addTo(map);
 
-        </div>
+  // --- IYONG DATA NA PUWEDENG I-EDIT PER DAY AT BARANGAY ---
+  const forecasts = {
+    // I-EDIT ANG DATA DITO PARA SA BAWAT ARAW
+    day1: [
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H30° - L26°", icon: "icon02.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" }
+    ],
+    day2: [
+      // Kopyahin ang lahat ng barangay mula sa Day 1 at palitan ang values
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H31° - L27°", icon: "icon02.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" }
+    ],
+    day3: [
+      // Kopyahin ang lahat ng barangay mula sa Day 1 at palitan ang values
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H29° - L25°", icon: "icon02.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" }
+    ]
+  };
 
-        <div class="general-status">
-            <div id="weather-icon-container">
-                <img id="weather-icon" src="https://openweathermap.org/img/wn/01d@2x.png" alt="Weather Icon" style="width: 80px; height: 80px;">
-            </div>
-            <div class="status-details">
-                <h2 id="weather-description">--</h2>
-                <p>Sunrise: <span id="sunrise-time">--</span> | Sunset: <span id="sunset-time">--</span></p>
-            </div>
-        </div>
-    </main>
+  let currentMarkers = L.layerGroup().addTo(map);
 
-    <script>
-        // JavaScript Logic 
+  function createMarker(loc) {
+    const iconHtml = `
+      <div class="custom-marker">
+        <img src="${loc.icon}">
+        <div class="loc-name">${loc.name}</div>
+        <div class="temp">${loc.temp}</div>
+        <div class="chance">${loc.chance}</div>
+      </div>`;
+    const customIcon = L.divIcon({
+      html: iconHtml,
+      className: '',
+      iconSize: [30, 42],
+      iconAnchor: [15, 42]
+    });
+    return L.marker([loc.lat, loc.lon], { icon: customIcon });
+  }
 
-        // OpenWeatherMap API details
-        const API_KEY = "00130d785f0014dd2e42832a3693cfd6";
-        const CITY_ID = "1721281"; // Cabuyao City ID
-        const API_URL = `https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&units=metric`;
+  function showForecast(day) {
+    // Tanggalin ang lahat ng current markers
+    currentMarkers.clearLayers();
 
-        // DOM elements
-        // Temperature
-        // Removed: mainTempFill, feelsLikeFill
-        const mainTempValue = document.getElementById('main-temp-value'); 
-        const feelsLikeValue = document.getElementById('feels-like-value'); 
-        const minMaxTemp = document.getElementById('min-max-temp');
-        
-        // Wind
-        const windDirectionArrow = document.getElementById('wind-direction-arrow');
-        const windSpeedDisplay = document.getElementById('wind-speed');
-        const windDirectionText = document.getElementById('wind-direction-text');
-        
-        // Pressure
-        const barometerNeedle = document.getElementById('barometer-needle');
-        const pressureHpa = document.getElementById('pressure-hpa');
+    // Kunin ang data para sa pinindot na araw
+    const locations = forecasts[day] || [];
 
-        // Humidity
-        const humidityCircle = document.getElementById('humidity-circle');
-        const humidityPercentDisplay = document.getElementById('humidity-percent');
-        const cloudinessPercent = document.getElementById('cloudiness-percent');
-        
-        // General
-        const lastUpdate = document.getElementById('last-update');
-        const weatherIcon = document.getElementById('weather-icon');
-        const weatherDescription = document.getElementById('weather-description');
-        const visibilityKm = document.getElementById('visibility-km');
-        const sunriseTime = document.getElementById('sunrise-time');
-        const sunsetTime = document.getElementById('sunset-time');
+    // Idagdag ang mga bagong markers
+    locations.forEach(loc => {
+      createMarker(loc).addTo(currentMarkers);
+    });
 
+    // I-update ang active state ng buttons
+    document.querySelectorAll('.day-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.getElementById(`${day}-btn`).classList.add('active');
+  }
 
-        /**
-         * Converts meteorological wind degrees to a compass text direction.
-         */
-        function degToCardinal(deg) {
-            const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-            const index = Math.round(deg / 22.5) % 16; 
-            return directions[index];
-        }
-
-        /**
-         * Converts Unix timestamp to local time string (HH:MM AM/PM).
-         */
-        function formatTime(timestamp, timezoneOffsetSeconds) {
-            // Using the timezone offset from the API data to correctly format the local time
-            const date = new Date((timestamp + timezoneOffsetSeconds) * 1000);
-            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'UTC' });
-        }
-
-        /**
-         * Updates the Temperature Gauges (Text only).
-         */
-        function updateTempDisplay(mainTemp, feelsLike) {
-            // Simple text update as animation is removed
-            mainTempValue.textContent = `${Math.round(mainTemp)}°C`;
-            feelsLikeValue.textContent = `${Math.round(feelsLike)}°C`;
-        }
-
-        /**
-         * Updates the Wind Gauge animation and converts m/s to km/h.
-         */
-        function updateWindGauge(speed_ms, deg) {
-            // Conversion: 1 m/s = 3.6 km/h
-            const speed_kmh = speed_ms * 3.6; 
-            
-            windSpeedDisplay.textContent = speed_kmh.toFixed(1);
-            windDirectionText.textContent = degToCardinal(deg);
-            windDirectionArrow.style.transform = `translate(-50%, -100%) rotate(${deg}deg)`;
-        }
-
-        /**
-         * Updates the Barometer Gauge animation.
-         */
-        function updatePressureGauge(hpa) {
-            const minPressure = 980;
-            const maxPressure = 1040;
-            const maxDegree = 135; 
-            const minDegree = -135;
-            const range = maxPressure - minPressure;
-            const degreeRange = maxDegree - minDegree; 
-            
-            let position = (hpa - minPressure) / range;
-            position = Math.max(0, Math.min(1, position)); 
-            const degrees = (position * degreeRange) + minDegree;
-            
-            pressureHpa.textContent = Math.round(hpa);
-            barometerNeedle.style.transform = `translate(-50%, -100%) rotate(${degrees}deg)`;
-        }
-        
-        /**
-         * Updates the Humidity Gauge animation.
-         */
-        function updateHumidityGauge(humidity) {
-            const fillDegree = humidity * 1.8; 
-            
-            // Update the CSS conic-gradient property
-            humidityCircle.style.background = `conic-gradient(
-                var(--gauge-humidity) 0deg,
-                var(--gauge-humidity) ${fillDegree}deg,
-                rgba(255, 255, 255, 0.1) ${fillDegree}deg,
-                rgba(255, 255, 255, 0.1) 180deg
-            )`;
-            
-            humidityPercentDisplay.textContent = `${humidity}%`;
-        }
-
-        /**
-         * Fetches data from OpenWeatherMap API and updates all elements.
-         */
-        async function fetchWeatherData() {
-            try {
-                lastUpdate.textContent = "Updating...";
-
-                const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-
-                // Extract key data points
-                const main_temp = data.main.temp;
-                const feels_like = data.main.feels_like;
-                const temp_min = data.main.temp_min;
-                const temp_max = data.main.temp_max;
-                const wind_speed_ms = data.wind.speed; // m/s
-                const wind_deg = data.wind.deg;
-                const pressure = data.main.pressure; // hPa
-                const humidity = data.main.humidity;
-                const weather_desc = data.weather[0].description;
-                const weather_icon = data.weather[0].icon;
-                const cloud_percent = data.clouds.all;
-                const visibility_m = data.visibility; // meters
-                const timezoneOffset = data.timezone; // seconds
-
-                
-                // 1. Update Gauges/Displays
-                updateTempDisplay(main_temp, feels_like); // Updated function call
-                updateWindGauge(wind_speed_ms, wind_deg);
-                updatePressureGauge(pressure);
-                updateHumidityGauge(humidity); 
-
-                // 2. Update Text Info
-                minMaxTemp.textContent = `${Math.round(temp_min)}°C / ${Math.round(temp_max)}°C`;
-                cloudinessPercent.textContent = `${cloud_percent}%`;
-                weatherDescription.textContent = weather_desc;
-                
-                // Convert visibility from meters to km
-                const visibility_km = (visibility_m / 1000).toFixed(1);
-                visibilityKm.textContent = `${visibility_km} km`;
-                
-                // Sunrise/Sunset formatting using the timezone offset
-                const localSunrise = formatTime(data.sys.sunrise, timezoneOffset);
-                const localSunset = formatTime(data.sys.sunset, timezoneOffset);
-                sunriseTime.textContent = localSunrise;
-                sunsetTime.textContent = localSunset;
-
-                // 3. Update Icon
-                weatherIcon.src = `https://openweathermap.org/img/wn/${weather_icon}@2x.png`;
-                
-                // 4. Update Last Updated Time
-                const now = new Date();
-                const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-                lastUpdate.textContent = now.toLocaleDateString('en-US', options);
-
-            } catch (error) {
-                console.error("Could not fetch weather data:", error);
-                lastUpdate.textContent = "Error: Check API Key/Connection.";
-            }
-        }
-
-        // --- Execution ---
-        
-        // Initial fetch when the script loads
-        fetchWeatherData();
-
-        // Set up the auto-update every 5 minutes (300,000 milliseconds)
-        setInterval(fetchWeatherData, 5 * 60 * 1000); 
-
-    </script>
-
-    <p>NOTICE: The information provided is unofficial and originates from the Automatic Weather Instrument (AWI-ESP32). Please be aware that the data may vary in value, and some of it is sourced from OpenWeather API.</p>
+  // I-display ang Day 1 forecast sa simula
+  showForecast('day1');
+</script>
 </body>
 </html>
