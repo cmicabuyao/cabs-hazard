@@ -1,0 +1,4 @@
+HOURS,DATETIME,LOT,LON,LOCATION,CAT,MSW,MOVEMENT
+6,"5:00 AM, 23 October 2025",20.0',121.3',"85 km Southwest of Basco, Batanes",TD,45,SW - 20
+12,"5:00 PM, 23 October 2025",18.7',120.0',"80 km Northwest of Laoag City, Ilocos, Norte",TD,45,SW -20 
+24,"5:00 AM, 24 October 2025",17.0',117.7',"290 km West of Bacnotan, La Union",L,-,SW - 20
