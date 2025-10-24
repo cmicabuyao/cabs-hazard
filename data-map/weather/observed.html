@@ -37,24 +37,24 @@
 
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
         }
 
         header h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: clamp(1.5rem, 4vw, 2.5rem); 
+            font-size: clamp(1.5rem, 2,5vw, 2.5rem); 
             color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); 
+            text-shadow: 0 0 10px rgba(109, 0, 212, 0.5); 
             font-style: italic; 
             font-weight: 700; 
         }
 
         /* Update Info */
         .update-info {
-            text-align: right;
+            text-align: center;
             font-size: 0.8rem;
             color: var(--secondary-text-color);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         /* Dashboard Layout (Responsive Grid) */
@@ -310,7 +310,8 @@
     <main class="weather-dashboard">
         <p class="update-info">
             Last Updated: <span id="last-update">Fetching data...</span>
-            
+            <br>
+            NOTICE: This is unofficial data from AWI-ESP32 and OpenWeather API; values may vary.
         </p>
         
         <div class="gauges-container">
@@ -338,8 +339,10 @@
                 <div class="gauge-header">WIND</div>
                 <div class="wind-compass-container">
                     <div id="N" class="compass-point">N</div>
+                    
                     <div id="S" class="compass-point">S</div>
                     <div id="E" class="compass-point">E</div>
+                    
                     <div id="W" class="compass-point">W</div>
                     
                     <div id="wind-direction-arrow" class="wind-direction-arrow"></div>
@@ -586,6 +589,6 @@
 
     </script>
 
-    <p>NOTICE: The information provided is unofficial and originates from the Automatic Weather Instrument (AWI-ESP32). <br> Please be aware that the data may vary in value, and some of it is sourced from OpenWeather API.</p>
+    <p>NOTICE: The information provided is unofficial and originates from the Automatic Weather Instrument (AWI-ESP32). Please be aware that the data may vary in value, and some of it is sourced from OpenWeather API.</p>
 </body>
 </html>
