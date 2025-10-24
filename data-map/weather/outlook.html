@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Outlook</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map-container { 
+      height: 100%; /* Full height container */
+      position: relative; /* Para maging base ng absolute positioning ng buttons */
+    }
+    #map { 
+      height: 100%; 
+    }
+
+    /* --- Marker Styles (Pareho pa rin) --- */
+    .custom-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform: translate(-50%, -100%);
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
+
+    .custom-marker img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      margin-bottom: 3px;
+    }
+
+    .loc-name {
+      font-weight: bold;
+      color: white;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
+
+    .temp {
+      color: white;
+      font-size: 13px;
+      margin-bottom: 1px;
+    }
+
+    .chance {
+      color: #90ee90; /* Light green for visibility */
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* --- Fixed Info Box (Floating sa Upper-Right) --- */
+    .info-box {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.7); /* Mas transparent para makita ang mapa */
+      color: white;
+      border: 1px solid white;
+      padding: 8px 10px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.2;
+      z-index: 999;
+      border-radius: 3px;
+      white-space: pre-line;
+    }
+
+    /* --- Floating Button Container (NEW STYLES) --- */
+    #button-container {
+      position: absolute; /* Ginawa itong floating */
+      bottom: 20px;       /* Posisyon sa ilalim ng mapa */
+      left: 50%;          /* Center horizontally */
+      transform: translateX(-50%); /* Tiyakin na nasa gitna */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      z-index: 1000; /* Tiyakin na nasa ibabaw ng mapa at markers */
+    }
+
+    .day-button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: 2px solid white;
+      background-color: transparent; /* Transparent background */
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, border-color 0.3s;
+      border-radius: 5px;
+    }
+
+    .day-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .day-button.active {
+      background-color: #007bff; /* Blue for active button */
+      border-color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map-container">
+  <div id="map"></div>
+  
+  <div class="info-box">
+  Issued: 23 October 2025
+  Valid Until: 5:00 AM - 5:00 PM Today
+  Prepared by: AT/HH
+  </div>
+
+  <div id="button-container">
+    <button class="day-button active" id="day1-btn" onclick="showForecast('day1')">Day 1</button>
+    <button class="day-button" id="day2-btn" onclick="showForecast('day2')">Day 2</button>
+    <button class="day-button" id="day3-btn" onclick="showForecast('day3')">Day 3</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map', {
+    center: [14.277222, 121.123333],
+    zoom: 15,
+    zoomControl: true
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors & CARTO',
+    maxZoom: 19
+  }).addTo(map);
+
+  // --- IYONG DATA NA PUWEDENG I-EDIT PER DAY AT BARANGAY ---
+  const forecasts = {
+    // I-EDIT ANG DATA DITO PARA SA BAWAT ARAW
+    day1: [
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H30° - L26°", icon: "icon02.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H30° - L26°", icon: "icon01.png", chance: "Chance of Rain: 50%" }
+    ],
+    day2: [
+      // Kopyahin ang lahat ng barangay mula sa Day 1 at palitan ang values
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H31° - L27°", icon: "icon02.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H31° - L27°", icon: "icon01.png", chance: "Chance of Rain: 60%" }
+    ],
+    day3: [
+      // Kopyahin ang lahat ng barangay mula sa Day 1 at palitan ang values
+      { lat: 14.271389, lon: 121.124167, name: "SALA", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.277222, lon: 121.123333, name: "CABUYAO-BAYAN", temp: "H29° - L25°", icon: "icon02.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.285556, lon: 121.129444, name: "BIGAA", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.286667, lon: 121.138056, name: "BUTONG", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.275556, lon: 121.150278, name: "MARINIG", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.26, lon: 121.165278, name: "GULOD", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.244444, lon: 121.169722, name: "BACLARAN", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.238611, lon: 121.151667, name: "MAMATID", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.233333, lon: 121.137778, name: "BANLIC", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.24, lon: 121.1375, name: "SAN-ISIDRO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.246667, lon: 121.13, name: "PULO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.255556, lon: 121.127778, name: "BANAY-BANAY", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.262778, lon: 121.126944, name: "NUIGAN", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.233889, lon: 121.100556, name: "DIEZMO", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.221944, lon: 121.074167, name: "PITTLAND", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" },
+      { lat: 14.203333, lon: 121.039167, name: "CASILE", temp: "H29° - L25°", icon: "icon01.png", chance: "Chance of Rain: 40%" }
+    ]
+  };
+
+  let currentMarkers = L.layerGroup().addTo(map);
+
+  function createMarker(loc) {
+    const iconHtml = `
+      <div class="custom-marker">
+        <img src="${loc.icon}">
+        <div class="loc-name">${loc.name}</div>
+        <div class="temp">${loc.temp}</div>
+        <div class="chance">${loc.chance}</div>
+      </div>`;
+    const customIcon = L.divIcon({
+      html: iconHtml,
+      className: '',
+      iconSize: [30, 42],
+      iconAnchor: [15, 42]
+    });
+    return L.marker([loc.lat, loc.lon], { icon: customIcon });
+  }
+
+  function showForecast(day) {
+    // Tanggalin ang lahat ng current markers
+    currentMarkers.clearLayers();
+
+    // Kunin ang data para sa pinindot na araw
+    const locations = forecasts[day] || [];
+
+    // Idagdag ang mga bagong markers
+    locations.forEach(loc => {
+      createMarker(loc).addTo(currentMarkers);
+    });
+
+    // I-update ang active state ng buttons
+    document.querySelectorAll('.day-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.getElementById(`${day}-btn`).classList.add('active');
+  }
+
+  // I-display ang Day 1 forecast sa simula
+  showForecast('day1');
+</script>
+</body>
+</html>
