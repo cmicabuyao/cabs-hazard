@@ -14,7 +14,7 @@
           "latitude": 20.0,
           "longitude": 121.3,
           "location": "85 km southwest of Basco, Batanes",
-          "category": "Tropical Depression",
+          "category": "TD",
           "sustained_winds": "45 km/h",
           "movement": "Southwest at 20 km/h"
         },
@@ -24,7 +24,7 @@
           "latitude": 18.7,
           "longitude": 120.0,
           "location": "80 km northwest of Laoag City, Ilocos Norte",
-          "category": "Tropical Depression",
+          "category": "TD",
           "sustained_winds": "45 km/h",
           "movement": "Southwest at 20 km/h"
         },
@@ -34,7 +34,7 @@
           "latitude": 17.0,
           "longitude": 117.7,
           "location": "290 km west of Dagupan, La Union",
-          "category": "Low Pressure Area",
+          "category": "L",
           "sustained_winds": "",
           "movement": "Southwest at 20 km/h"
         }
@@ -50,7 +50,7 @@
           "latitude": 8.0,
           "longitude": 132.3,
           "location": "795 km east of Butuan City",
-          "category": "Low Pressure Area",
+          "category": "L",
           "sustained_winds": "",
           "movement": "Westward at 15 km/h"
         },
@@ -60,7 +60,7 @@
           "latitude": 8.7,
           "longitude": 135.4,
           "location": "435 km east of Butuan City",
-          "category": "Tropical Depression",
+          "category": "TD",
           "sustained_winds": "45 km/h",
           "movement": "Westward at 15 km/h"
         }
@@ -68,3 +68,4 @@
     }
   ]
 }
+
