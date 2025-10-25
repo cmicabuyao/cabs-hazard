@@ -30,20 +30,20 @@
     // Initialize map centered around the Philippines
     const map = L.map('map', {
       center: [14.1601, 121.0812],
-      zoom: 10,
-      minZoom: 1,
-      maxZoom: 20
+      zoom: 15,
+      minZoom: 5,
+      maxZoom: 30
     });
 
     // Base map — Dark Style (OpenStreetMap via CartoDB)
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; Satellite JMA/DOST-PAGASA & OpenStreetMap contributors & CartoDB',
+      attribution: '&copy; OpenStreetMap contributors & CartoDB',
       subdomains: 'abcd',
-      maxZoom: 25
+      maxZoom: 19
     }).addTo(map);
 
     // Himawari overlay link
-    const himawariUrl = "http://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/latest-him-colored-hourly.gif";
+    const himawariUrl = "https://src.meteopilipinas.gov.ph/repo/mtsat-colored/24hour/latest-him-colored-hourly.gif";
 
     // EDIT HERE: Overlay bounds
     // These coordinates define where the GIF image is drawn on the map.
@@ -64,7 +64,7 @@
 
     // Add overlay
     const himawariOverlay = L.imageOverlay(himawariUrl, bounds, {
-      opacity: 0.55,  // EDIT: Transparency (0 = invisible, 1 = solid)
+      opacity: 0.65,  // EDIT: Transparency (0 = invisible, 1 = solid)
       interactive: false
     }).addTo(map);
 
