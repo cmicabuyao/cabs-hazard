@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabuyao Map</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+    <style>
+        /* Full-screen map container styling */
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Para walang scrollbar */
+        }
+
+        /* Custom style for the attribution box to mimic OpenStreetMap's look and add blur */
+        .leaflet-container .leaflet-control-attribution {
+            background-color: rgba(255, 255, 255, 0.7); /* Light background with transparency */
+            backdrop-filter: blur(4px); /* Blur effect */
+            -webkit-backdrop-filter: blur(4px); /* For better browser compatibility */
+            padding: 0 5px;
+            font-size: 11px; /* Small text */
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.5); /* Slight text shadow for contrast */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Soft shadow for the box */
+            border-radius: 4px; /* Rounded corners */
+        }
+
+        /* Ensure zoom control is visible and placed correctly */
+        .leaflet-control-zoom {
+            margin-left: 10px; /* Adjust spacing from the left */
+            margin-top: 10px; /* Adjust spacing from the top */
+        }
+
+        /* Make map container fill the viewport on all devices */
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+    <script>
+        // Filename ng iyong image
+        const imageUrl = 'cabuyao.png';
+        
+        // Custom Attribution text
+        const attributionText = 'This Map Generate by CWI-CABUYA PWAT';
+
+        // 1. I-initialize ang Leaflet map
+        // Gamitin ang L.CRS.Simple para sa non-geographical images (pixels as coordinates)
+        const map = L.map('map', {
+            crs: L.CRS.Simple, // Crucial for image overlay
+            minZoom: -2, // A low minZoom to allow zooming out enough to see the whole image
+            maxZoom: 10, // Max zoom na hinihiling mo
+            zoomControl: false, // I-disable muna ang default zoom control para ilagay natin sa kaliwa
+        });
+
+        // 2. I-load ang image para kunin ang dimensions
+        const img = new Image();
+        img.onload = function () {
+            const w = this.width;
+            const h = this.height;
+
+            // Coordinate bounds ng image: [y-min, x-min], [y-max, x-max]
+            const bounds = [[0, 0], [h, w]];
+
+            // 3. I-add ang image overlay sa map
+            L.imageOverlay(imageUrl, bounds).addTo(map);
+
+            // 4. I-set ang view ng map para i-fit ang buong image
+            map.fitBounds(bounds);
+        };
+        img.src = imageUrl;
+
+        // 5. I-add ang custom Zoom Control sa kaliwang itaas (parang hinihiling mo)
+        // Posisyon: 'topleft'
+        L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+
+        // 6. I-add ang custom Attribution Control
+        // Posisyon: 'bottomleft' (parang sa OpenStreetMap)
+        // Gamitin ang custom CSS class para maging blur box
+        L.control.attribution({
+            prefix: false, // Tanggalin ang default Leaflet prefix
+            position: 'bottomleft'
+        }).setPrefix(attributionText).addTo(map);
+
+        // Optional: I-set ang view ulit on load just in case (redundant but safe)
+        map.on('load', function() {
+            if (img.complete) {
+                const w = img.width;
+                const h = img.height;
+                const bounds = [[0, 0], [h, w]];
+                map.fitBounds(bounds);
+            }
+        });
+
+    </script>
+
+</body>
+</html>
