@@ -67,7 +67,7 @@
         // Gamitin ang L.CRS.Simple para sa non-geographical images (pixels as coordinates)
         const map = L.map('map', {
             crs: L.CRS.Simple, // Crucial for image overlay
-            minZoom: -2, // A low minZoom to allow zooming out enough to see the whole image
+            minZoom: -2.6, // A low minZoom to allow zooming out enough to see the whole image
             maxZoom: 10, // Max zoom na hinihiling mo
             zoomControl: false, // I-disable muna ang default zoom control para ilagay natin sa kaliwa
         });
