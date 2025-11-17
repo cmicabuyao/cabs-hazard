@@ -3,252 +3,211 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Himawari Satellite</title>
+  <title>Himawari9 - HighResolution</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    html, body { height: 100%; margin: 0; background: #000000; }
+    html, body { height: 100%; margin: 0; background: #000; }
     #map { width: 100%; height: 100%; }
-    .info {
+
+    /* Title and Time */
+    .title-box {
       position: absolute;
       top: 10px;
-      left: 10px;
-      z-index: 9999;
-      background: rgba(255,255,255,0.9);
-      padding: 6px 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      padding: 8px 16px;
       border-radius: 6px;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      z-index: 9000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+
+    .time-box {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      padding: 6px 14px;
+      border-radius: 6px;
+      color: #fff;
       font-family: system-ui, sans-serif;
       font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      z-index: 9000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
-    /* BAGONG DARK MODE STYLE PARA SA CONTROLS PANEL */
+
+    /* Controls Panel */
     .controls {
       position: absolute;
-      top: 10px;
+      top: 60px;
       right: 10px;
       z-index: 9999;
-      background: rgba(40, 40, 40, 0.95); /* Darker background */
-      color: #ffffff; /* White text */
-      padding: 10px;
+      background: rgba(30, 30, 30, 0.96);
+      color: #ffffff;
+      padding: 12px;
       border-radius: 6px;
+      width: 210px;
       font-family: system-ui, sans-serif;
-      font-size: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-      width: 200px;
-      /* Smooth transition */
       transition: opacity 0.3s, visibility 0.3s;
+      opacity: 0;
+      visibility: hidden;
     }
-    .controls input[type="range"] {
-        width: 100%;
-    }
-    .controls label {
-      display: block;
-      margin-top: 5px;
-    }
+    .controls input[type="range"] { width: 100%; }
+    .controls label { display: block; margin-top: 6px; font-size: 13px; }
 
-    /* Style para sa Close/Exit Button */
-    .controls-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
-    }
+    .controls-header { display: flex; justify-content: space-between; align-items: center; }
     .close-btn {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-        line-height: 1;
-        padding: 0;
-        margin: 0;
-        opacity: 0.7;
+      background: none; border: none; color: #fff; font-size: 18px;
+      cursor: pointer; opacity: 0.7;
     }
-    .close-btn:hover {
-        opacity: 1;
-    }
+    .close-btn:hover { opacity: 1; }
 
-    /* Style para sa Adjust Logo/Button */
     .adjust-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 9998; /* Ilagay sa likod ng controls panel */
-        background: rgba(40, 40, 40, 0.8);
-        border: 1px solid #ffffff33;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-        transition: background 0.2s, opacity 0.2s;
-        /* Itago sa simula */
-        opacity: 0;
-        visibility: hidden;
-    }
-    .adjust-btn:hover {
-        background: rgba(60, 60, 60, 0.9);
-    }
-    /* Simple SVG Icon (Settings/Gear icon) */
-    .adjust-btn svg {
-        fill: white;
-        width: 20px;
-        height: 20px;
+      position: absolute;
+      top: 60px;
+      right: 10px;
+      z-index: 9998;
+      background: rgba(40, 40, 40, 0.8);
+      border: 1px solid #ffffff33;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      opacity: 1;
+      visibility: visible;
+      transition: 0.2s;
     }
 
-    .leaflet-image-layer { 
-        transition: filter 0.1s linear, opacity 0.1s linear; 
+    .adjust-btn svg { fill: white; width: 22px; height: 22px; }
+
+    .leaflet-image-layer { mix-blend-mode: multiply; transition: filter 0.1s linear, opacity 0.1s linear; } {
+      transition: filter 0.1s linear, opacity 0.1s linear;
     }
   </style>
 </head>
 <body>
+
+  <div class="title-box">Himawari9 - HighResolution</div>
+  <div class="time-box" id="timeBox">Loading time...</div>
+
   <div id="map"></div>
 
   <div class="controls" id="controlsPanel">
     <div class="controls-header">
-        <p style="margin: 0; font-weight: bold;">*Color Adjustments</p>
-        <button class="close-btn" onclick="toggleControls()">x</button>
+      <p style="margin:0;font-weight:bold;">Color Adjustments</p>
+      <button class="close-btn" onclick="toggleControls()">×</button>
     </div>
 
-    <label for="contrast">Contrast: <span id="contrastValue">100%</span></label>
+    <label>Contrast: <span id="contrastValue">230%</span></label>
     <input type="range" id="contrast" min="0" max="300" value="230">
 
-    <label for="brightness">Brightness: <span id="brightnessValue">100%</span></label>
+    <label>Brightness: <span id="brightnessValue">100%</span></label>
     <input type="range" id="brightness" min="0" max="200" value="100">
 
-    <label for="opacity">Opacity: <span id="opacityValue">50%</span></label>
+    <label>Opacity: <span id="opacityValue">25%</span></label>
     <input type="range" id="opacity" min="0" max="100" value="25">
   </div>
+
   <button class="adjust-btn" id="adjustButton" onclick="toggleControls()">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 8c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm-7 7H3V9h2v6zm13-6v6h2V9h-2zm-7-2v2H9V7h2zm0 8v2H9v-2h2zM7.83 6.34l1.42 1.42L6.41 9.5l-1.42-1.42 2.84-1.74zm10.74 1.74l-1.42 1.42 2.84 1.74 1.42-1.42-2.84-1.74zm-3.59-1.42l-1.42 1.42-1.74-2.84 1.42-1.42 1.74 2.84zm-4.74 7.08l1.42 1.42-2.84 1.74-1.42-1.42 2.84-1.74z"/>
-    </svg>
+    <svg viewBox="0 0 24 24"><path d="M12 8c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm-7 7H3V9h2v6zm13-6v6h2V9h-2zm-7-2v2H9V7h2zm0 8v2H9v-2h2z"/></svg>
   </button>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // **GEOJSON PLACEHOLDER** (Dapat palitan ng totoong data kung gagamitin ang border)
-    const philippinesGeoJSON = {
-      "type": "FeatureCollection",
-      "features": []
-    };
-    
-    // CENTER sa Cabuyao, Laguna
     const map = L.map('map', {
-      center: [14.2233, 121.1250], 
+      center: [14.2233, 121.1250],
       zoom: 11,
       minZoom: 7,
       maxZoom: 30
     });
 
-    // Base map — Dark Style
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy;JMA-MSC Data Process by CWI-CABUYAO Servers, OpenStreetMap',
-      subdomains: 'abcd',
-      maxZoom: 19
+      attribution: '&copy;JMA-MSC | Processed by CMI-CABUYAO Servers',
+      subdomains: 'abcd'
     }).addTo(map);
 
-    // Himawari overlay link
-    const himawariUrl = "https://realearth.ssec.wisc.edu/api/image?products=HIMAWARI-B03.-100,HIMAWARI-B13-GRAD.100,HIMAWARI-true-color.-100,NESDIS-GHE-HourlyRainfall.-100&width=480&height=278&client=RealEarth&basemap=-&labels=-&center=14.136527770028032,121.56605072945429&zoom=5&timeproduct=HIMAWARI-B03&timespan=-12t&animate=true&animationspeed=85"
+    const himawariUrl = "https://realearth.ssec.wisc.edu/api/image?products=HIMAWARI-B03.-100,HIMAWARI-B13-GRAD.100,HIMAWARI-true-color.-100&width=480&height=278&client=RealEarth&basemap=-&labels=-&center=14.13,121.56&zoom=5&timeproduct=HIMAWARI-B03&timespan=-12t&animate=true&animationspeed=85";
 
-    // Overlay bounds
-    const bounds = [
-      [  8.0, 110.12 ], 
-      [  20.0, 133.00 ]  
-    ];
+    const bounds = [ [8.0,110.12],[20.0,133.00] ];
 
-    // Add overlay
-    const himawariOverlay = L.imageOverlay(himawariUrl, bounds, {
-      opacity: 0.50,
-      interactive: false
-    }).addTo(map);
+    const himawariOverlay = L.imageOverlay(himawariUrl, bounds, { opacity: 0.25 }).addTo(map);
 
-    // Idagdag ang GeoJSON layer (kung may data)
-    if (philippinesGeoJSON.features.length > 0) {
-        L.geoJSON(philippinesGeoJSON, {
-            style: {
-                color: "white",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0
-            }
-        }).addTo(map);
+    let himawariImageElement = null;
+
+    himawariOverlay.on('load', () => {
+      himawariImageElement = himawariOverlay.getElement();
+      updateImageStyle();
+      updateTime();
+    });
+
+    function updateTime() {
+      const t = new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" });
+      document.getElementById('timeBox').textContent = `Latest Update: ${t}`;
     }
-    
-    // BAGONG FUNCTIONALITY: TOGGLE CONTROLS at IMAGE ADJUSTMENTS
+
     const controlsPanel = document.getElementById('controlsPanel');
     const adjustButton = document.getElementById('adjustButton');
-    
+
+    let panelVisible = false;
+
+    function toggleControls() {
+      if (panelVisible) {
+        controlsPanel.style.opacity = '0';
+        controlsPanel.style.visibility = 'hidden';
+        adjustButton.style.opacity = '1';
+        adjustButton.style.visibility = 'visible';
+      } else {
+        controlsPanel.style.opacity = '1';
+        controlsPanel.style.visibility = 'visible';
+        adjustButton.style.opacity = '0';
+        adjustButton.style.visibility = 'hidden';
+      }
+      panelVisible = !panelVisible;
+    }
+
     const contrastSlider = document.getElementById('contrast');
     const brightnessSlider = document.getElementById('brightness');
     const opacitySlider = document.getElementById('opacity');
+
     const contrastValueSpan = document.getElementById('contrastValue');
     const brightnessValueSpan = document.getElementById('brightnessValue');
     const opacityValueSpan = document.getElementById('opacityValue');
-    
-    let himawariImageElement = null;
-    
-    // Default state: Ang panel ay nakikita (visible) sa simula
-    let isPanelVisible = true;
-
-    function toggleControls() {
-        if (isPanelVisible) {
-            // Itago ang panel
-            controlsPanel.style.opacity = '0';
-            controlsPanel.style.visibility = 'hidden';
-            // Ipakita ang adjust button
-            adjustButton.style.opacity = '1';
-            adjustButton.style.visibility = 'visible';
-        } else {
-            // Ipakita ang panel
-            controlsPanel.style.opacity = '1';
-            controlsPanel.style.visibility = 'visible';
-            // Itago ang adjust button
-            adjustButton.style.opacity = '0';
-            adjustButton.style.visibility = 'hidden';
-        }
-        isPanelVisible = !isPanelVisible;
-    }
-
-    himawariOverlay.on('load', function () {
-        himawariImageElement = himawariOverlay.getElement();
-        updateImageStyle(); 
-    });
 
     function updateImageStyle() {
       if (!himawariImageElement) return;
 
-      const contrast = contrastSlider.value / 100;
-      const brightness = brightnessSlider.value / 100;
-      const opacity = opacitySlider.value / 100;
+      const contrast = contrastSlider.value;
+      const brightness = brightnessSlider.value;
+      const opacity = opacitySlider.value;
 
-      const filterStyle = `contrast(${contrast}) brightness(${brightness})`;
-      
-      himawariImageElement.style.filter = filterStyle;
-      himawariImageElement.style.opacity = opacity;
+      himawariImageElement.style.filter = `contrast(${contrast}%) brightness(${brightness}%)`;
+      himawariImageElement.style.opacity = opacity / 100;
 
-      contrastValueSpan.textContent = `${contrastSlider.value}%`;
-      brightnessValueSpan.textContent = `${brightnessSlider.value}%`;
-      opacityValueSpan.textContent = `${opacitySlider.value}%`;
+      contrastValueSpan.textContent = contrast + "%";
+      brightnessValueSpan.textContent = brightness + "%";
+      opacityValueSpan.textContent = opacity + "%";
     }
 
-    // Listener para sa bawat slider
-    contrastSlider.addEventListener('input', updateImageStyle);
-    brightnessSlider.addEventListener('input', updateImageStyle);
-    opacitySlider.addEventListener('input', updateImageStyle);
-    
-    // Tiyakin na ang default style ay na-apply
-    updateImageStyle(); 
+    contrastSlider.oninput = updateImageStyle;
+    brightnessSlider.oninput = updateImageStyle;
+    opacitySlider.oninput = updateImageStyle;
 
-    // Auto-refresh logic
-    const refreshInterval = 180000; 
     setInterval(() => {
-      himawariOverlay.setUrl(`${himawariUrl}?t=${Date.now()}`);
-      console.log("Himawari image refreshed:", new Date().toLocaleTimeString("en-PH", { timeZone: "Asia/Manila" }));
-      setTimeout(updateImageStyle, 500); 
-    }, refreshInterval);
+      himawariOverlay.setUrl(himawariUrl + `&t=${Date.now()}`);
+      setTimeout(() => { updateImageStyle(); updateTime(); }, 500);
+    }, 180000);
+
   </script>
 </body>
-
 </html>
