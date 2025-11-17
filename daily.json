@@ -1,4 +1,9 @@
 [
+  Date Issued: November 11, 2025
+  Valid from : 5:00 AM to 5:00 PM
+]
+
+[
   { "lat": 14.271389, "lon": 121.124167, "name": "SALA", "temp": "H30° - L26°", "icon": "icon01.png" },
   { "lat": 14.277222, "lon": 121.123333, "name": "CABUYAO-BAYAN", "temp": "H30° - L26°", "icon": "icon02.png" },
   { "lat": 14.285556, "lon": 121.129444, "name": "BIGAA", "temp": "H30° - L26°", "icon": "icon01.png" },
