@@ -1,0 +1,18 @@
+[
+  { "lat": 14.271389, "lon": 121.124167, "name": "SALA", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.277222, "lon": 121.123333, "name": "CABUYAO-BAYAN", "temp": "H30° - L26°", "icon": "icon02.png" },
+  { "lat": 14.285556, "lon": 121.129444, "name": "BIGAA", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.286667, "lon": 121.138056, "name": "BUTONG", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.275556, "lon": 121.150278, "name": "MARINIG", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.26, "lon": 121.165278, "name": "GULOD", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.244444, "lon": 121.169722, "name": "BACLARAN", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.238611, "lon": 121.151667, "name": "MAMATID", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.233333, "lon": 121.137778, "name": "BANLIC", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.24, "lon": 121.1375, "name": "SAN-ISIDRO", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.246667, "lon": 121.13, "name": "PULO", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.255556, "lon": 121.127778, "name": "BANAY-BANAY", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.262778, "lon": 121.126944, "name": "NUIGAN", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.233889, "lon": 121.100556, "name": "DIEZMO", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.221944, "lon": 121.074167, "name": "PITTLAND", "temp": "H30° - L26°", "icon": "icon01.png" },
+  { "lat": 14.203333, "lon": 121.039167, "name": "CASILE", "temp": "H30° - L26°", "icon": "icon01.png" }
+]
